@@ -1,0 +1,29 @@
+# Bytecode Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ambientes virtuais
+venv/
+.venv/
+env/
+
+# Arquivos de IDE
+.vscode/
+.idea/
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos de teste
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+
+# CSV gerado pelo sistema (opcional)
+# Descomente se não quiser versionar os dados
+# data/chamados.csv

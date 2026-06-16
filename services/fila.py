@@ -37,4 +37,6 @@ class FilaPrioridade :
         
         return self.heap[0] # Retorna o chamado de maior prioridade (menor valor) sem removê-lo da fila
     
-    
+    def obter_todos(self):
+
+        return self.heap # Retorna todos os chamados na fila (sem ordenação) 
