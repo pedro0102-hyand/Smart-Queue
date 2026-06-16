@@ -14,7 +14,7 @@ class FilaPrioridade :
     def atender_proximo(self) -> Chamado|None:
 
         if not self.heap:
-            raise Exception("Não há chamados para atender.")
+            return None
         
         return heapq.heappop(self.heap) # Remove e retorna o chamado de maior prioridade (menor valor)
     
