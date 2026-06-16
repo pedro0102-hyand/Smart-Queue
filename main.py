@@ -4,6 +4,7 @@ from services.persistence import (
     carregar_chamados,
     salvar_chamados
 )
+from services.reports import top_chamados
 
 
 def calcular_prioridade(severidade: int) -> int:
@@ -25,7 +26,9 @@ def criar_chamado() -> Chamado:
 
     while True:
         try:
-            severidade = int(input("Severidade (1-5): "))
+            severidade = int(
+                input("Severidade (1-5): ")
+            )
 
             if 1 <= severidade <= 5:
                 break
@@ -55,13 +58,22 @@ def exibir_fila(fila: FilaPrioridade) -> None:
         print("Nenhum chamado na fila.")
         return
 
-    for i, chamado in enumerate(fila.listar_fila(), start=1):
+    for i, chamado in enumerate(
+        fila.listar_fila(),
+        start=1
+    ):
         print(f"{i}. {chamado}")
 
-    print(f"\nTotal de chamados: {fila.obter_tamanho_fila()}")
+    print(
+        f"\nTotal de chamados: "
+        f"{fila.obter_tamanho_fila()}"
+    )
 
 
-def atender_chamado(fila: FilaPrioridade) -> None:
+def atender_chamado(
+    fila: FilaPrioridade
+) -> None:
+
     chamado = fila.atender_proximo()
 
     if chamado is None:
@@ -72,7 +84,10 @@ def atender_chamado(fila: FilaPrioridade) -> None:
     print(chamado)
 
 
-def visualizar_proximo(fila: FilaPrioridade) -> None:
+def visualizar_proximo(
+    fila: FilaPrioridade
+) -> None:
+
     proximo = fila.visualizar_proximo()
 
     if proximo is None:
@@ -83,70 +98,143 @@ def visualizar_proximo(fila: FilaPrioridade) -> None:
     print(proximo)
 
 
+def exibir_top_chamados(
+    fila: FilaPrioridade
+) -> None:
+
+    top = top_chamados(
+        fila.obter_todos(),
+        n=5
+    )
+
+    if not top:
+        print("\nNenhum chamado na fila.")
+        return
+
+    print("\n=== TOP 5 CHAMADOS ===")
+
+    for i, chamado in enumerate(
+        top,
+        start=1
+    ):
+        print(f"{i}. {chamado}")
+
+
+def salvar_estado(
+    fila: FilaPrioridade
+) -> None:
+
+    salvar_chamados(
+        fila.obter_todos()
+    )
+
+
 def menu() -> None:
 
     fila = FilaPrioridade()
 
-    # Carrega chamados salvos
     chamados_salvos = carregar_chamados()
 
     for chamado in chamados_salvos:
         fila.adicionar_chamado(chamado)
 
     print(
-        f"\n📂 {len(chamados_salvos)} chamado(s) carregado(s)."
+        f"\n📂 {len(chamados_salvos)} "
+        "chamado(s) carregado(s)."
     )
 
     while True:
 
-        print("\n" + "=" * 30)
+        print("\n" + "=" * 35)
         print("         SMARTQUEUE")
-        print("=" * 30)
+        print("=" * 35)
         print("1 - Criar chamado")
         print("2 - Atender próximo")
         print("3 - Listar fila")
         print("4 - Ver próximo")
         print("5 - Quantidade de chamados")
+        print("6 - Top chamados críticos")
         print("0 - Sair")
 
-        opcao = input("\nEscolha: ").strip()
+        opcao = input(
+            "\nEscolha: "
+        ).strip()
 
         match opcao:
 
             case "1":
-                chamado = criar_chamado()
-                fila.adicionar_chamado(chamado)
 
-                print("\n✅ Chamado criado com sucesso!")
+                chamado = criar_chamado()
+
+                fila.adicionar_chamado(
+                    chamado
+                )
+
+                salvar_estado(fila)
+
+                print(
+                    "\n✅ Chamado criado "
+                    "com sucesso!"
+                )
 
             case "2":
-                atender_chamado(fila)
+
+                atender_chamado(
+                    fila
+                )
+
+                salvar_estado(
+                    fila
+                )
 
             case "3":
-                exibir_fila(fila)
+
+                exibir_fila(
+                    fila
+                )
 
             case "4":
-                visualizar_proximo(fila)
+
+                visualizar_proximo(
+                    fila
+                )
 
             case "5":
+
                 print(
-                    f"\nHá {fila.obter_tamanho_fila()} "
-                    "chamado(s) na fila."
+                    f"\nHá "
+                    f"{fila.obter_tamanho_fila()} "
+                    f"chamado(s) na fila."
+                )
+
+            case "6":
+
+                exibir_top_chamados(
+                    fila
                 )
 
             case "0":
 
-                # Salva os chamados antes de sair
-                salvar_chamados(
-                    fila.obter_todos()
+                salvar_estado(
+                    fila
                 )
 
-                print("\n💾 Chamados salvos com sucesso!")
-                print("Até logo! 👋")
+                print(
+                    "\n💾 Chamados "
+                    "salvos com sucesso!"
+                )
+
+                print(
+                    "Até logo! 👋"
+                )
+
                 break
 
             case _:
-                print("\n❌ Opção inválida.")
+
+                print(
+                    "\n❌ Opção inválida."
+                )
 
 
 if __name__ == "__main__":
