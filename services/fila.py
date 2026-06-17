@@ -1,42 +1,63 @@
 from models.chamado import Chamado
 import heapq
 
-class FilaPrioridade :
+
+class FilaPrioridade:
 
     def __init__(self):
+        """Inicializa a fila de prioridade vazia."""
+        self.heap = []
 
-        self.heap = [] # Lista para armazenar os chamados como uma heap
-
-    def adicionar_chamado(self, chamado: Chamado)-> None:
-
-        heapq.heappush(self.heap, chamado) # Adiciona o chamado à heap
+    def adicionar_chamado(self, chamado: Chamado) -> None:
+        """
+        Adiciona um chamado à fila.
+        
+        Args:
+            chamado: Objeto Chamado a ser adicionado.
+        """
+        heapq.heappush(self.heap, chamado)
     
-    def atender_proximo(self) -> Chamado|None:
-
+    def atender_proximo(self) -> Chamado | None:
+        """
+        Remove e retorna o chamado de maior prioridade.
+        
+        Returns:
+            Chamado de maior prioridade ou None se fila vazia.
+        """
         if not self.heap:
             return None
         
-        return heapq.heappop(self.heap) # Remove e retorna o chamado de maior prioridade (menor valor)
+        return heapq.heappop(self.heap)
     
     def listar_fila(self) -> list[Chamado]:
-
-        return sorted(self.heap) # Retorna a lista de chamados ordenada por prioridade (menor valor primeiro)
+        """
+        Retorna lista de chamados ordenada por prioridade.
+        
+        Returns:
+            Lista de chamados ordenada (maior prioridade primeiro).
+        """
+        return sorted(self.heap)
     
     def obter_tamanho_fila(self) -> int:
-
-        return len(self.heap) # Retorna o número de chamados na fila
+        """Retorna quantidade de chamados na fila."""
+        return len(self.heap)
     
     def esta_vazia(self) -> bool:
-
-        return len(self.heap) == 0 
+        """Verifica se a fila está vazia."""
+        return len(self.heap) == 0
     
-    def visualizar_proximo(self) -> Chamado|None:
-
-        if not self.heap:
-            raise Exception("Não há chamados para visualizar.")
+    def visualizar_proximo(self) -> Chamado | None:
+        """
+        Retorna o próximo chamado sem remover da fila.
         
-        return self.heap[0] # Retorna o chamado de maior prioridade (menor valor) sem removê-lo da fila
+        Returns:
+            Próximo chamado (maior prioridade) ou None se fila vazia.
+        """
+        if not self.heap:
+            return None
+        
+        return self.heap[0]
     
-    def obter_todos(self):
-
-        return self.heap # Retorna todos os chamados na fila (sem ordenação) 
+    def obter_todos(self) -> list[Chamado]:
+        """Retorna cópia de todos os chamados (sem ordenação de heap)."""
+        return self.heap.copy()

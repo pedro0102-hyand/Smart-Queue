@@ -1,3 +1,2 @@
 id,cliente,categoria,severidade,descricao,prioridade,criado_em
-a4408f70,luis,programar interface,4,fazer a interface inicial do sistema,-400,2026-06-15 22:49:34
-a11d1c9e,poiares,refazer o backend,4,consertar bugs e refatorar todo o backend,-400,2026-06-15 22:49:58
+4e6416cc,pedro,conserto de carro,3,problema no carro,-300,2026-06-17 00:39:31
