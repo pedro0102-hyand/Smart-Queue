@@ -22,6 +22,7 @@ Thumbs.db
 htmlcov/
 
 # Logs
+logs/
 *.log
 
 # CSV gerado pelo sistema (opcional)

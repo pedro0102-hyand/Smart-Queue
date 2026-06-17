@@ -1,5 +1,6 @@
 from models.chamado import Chamado
 from services.fila import FilaPrioridade
+from services.logger import get_logger
 from services.persistence import (
     carregar_chamados,
     salvar_chamados
@@ -8,6 +9,8 @@ from services.reports import (
     calcular_estatisticas,
     top_chamados,
 )
+
+logger = get_logger()
 
 
 def calcular_prioridade(severidade: int) -> int:
@@ -87,6 +90,12 @@ def atender_chamado(
     print("\n=== ATENDENDO CHAMADO ===")
     print(chamado)
 
+    logger.info(
+        "Chamado atendido: id=%s, cliente=%s",
+        chamado.id,
+        chamado.cliente,
+    )
+
 
 def visualizar_proximo(
     fila: FilaPrioridade
@@ -164,16 +173,35 @@ def salvar_estado(
     fila: FilaPrioridade
 ) -> None:
 
-    salvar_chamados(
-        fila.obter_todos()
-    )
+    try:
+        salvar_chamados(
+            fila.obter_todos()
+        )
+    except OSError as erro:
+        logger.error(
+            "Erro ao salvar chamados: %s",
+            erro,
+        )
+        print(
+            "\n❌ Erro ao salvar os chamados."
+        )
 
 
 def menu() -> None:
 
     fila = FilaPrioridade()
 
-    chamados_salvos = carregar_chamados()
+    try:
+        chamados_salvos = carregar_chamados()
+    except (OSError, ValueError, KeyError) as erro:
+        logger.error(
+            "Erro ao carregar chamados: %s",
+            erro,
+        )
+        chamados_salvos = []
+        print(
+            "\n❌ Erro ao carregar chamados salvos."
+        )
 
     for chamado in chamados_salvos:
         fila.carregar_chamado(chamado)
@@ -207,28 +235,53 @@ def menu() -> None:
 
             case "1":
 
-                chamado = criar_chamado()
+                try:
+                    chamado = criar_chamado()
 
-                fila.adicionar_chamado(
-                    chamado
-                )
+                    fila.adicionar_chamado(
+                        chamado
+                    )
 
-                salvar_estado(fila)
+                    salvar_estado(fila)
 
-                print(
-                    "\n✅ Chamado criado "
-                    "com sucesso!"
-                )
+                    logger.info(
+                        "Chamado criado: id=%s, "
+                        "cliente=%s",
+                        chamado.id,
+                        chamado.cliente,
+                    )
+
+                    print(
+                        "\n✅ Chamado criado "
+                        "com sucesso!"
+                    )
+                except Exception as erro:
+                    logger.error(
+                        "Erro ao criar chamado: %s",
+                        erro,
+                    )
+                    print(
+                        "\n❌ Erro ao criar chamado."
+                    )
 
             case "2":
 
-                atender_chamado(
-                    fila
-                )
+                try:
+                    atender_chamado(
+                        fila
+                    )
 
-                salvar_estado(
-                    fila
-                )
+                    salvar_estado(
+                        fila
+                    )
+                except Exception as erro:
+                    logger.error(
+                        "Erro ao atender chamado: %s",
+                        erro,
+                    )
+                    print(
+                        "\n❌ Erro ao atender chamado."
+                    )
 
             case "3":
 
