@@ -9,6 +9,7 @@ def criar_chamado_teste(
 
     return Chamado(
         prioridade=-(severidade * 100),
+        ordem_chegada=0,
         cliente=cliente,
         categoria="Teste",
         severidade=severidade,
@@ -96,3 +97,86 @@ def test_remover_reduz_tamanho():
     fila.atender_proximo()
 
     assert fila.obter_tamanho_fila() == 0
+
+
+def test_fifo_em_empate():
+
+    fila = FilaPrioridade()
+
+    primeiro = criar_chamado_teste(
+        2,
+        "Lucas"
+    )
+
+    segundo = criar_chamado_teste(
+        2,
+        "Rodrigo"
+    )
+
+    fila.adicionar_chamado(primeiro)
+    fila.adicionar_chamado(segundo)
+
+    atendido = fila.atender_proximo()
+
+    assert atendido.cliente == "Lucas"
+
+
+def test_busca_por_id():
+
+    fila = FilaPrioridade()
+
+    chamado = criar_chamado_teste(
+        3,
+        "Pedro"
+    )
+
+    fila.adicionar_chamado(chamado)
+
+    encontrado = fila.buscar_por_id(
+        chamado.id
+    )
+
+    assert encontrado is not None
+    assert encontrado.id == chamado.id
+    assert encontrado.cliente == "Pedro"
+
+
+def test_busca_por_id_inexistente():
+
+    fila = FilaPrioridade()
+
+    encontrado = fila.buscar_por_id(
+        "id_inexistente"
+    )
+
+    assert encontrado is None
+
+
+def test_cancelar_chamado():
+
+    fila = FilaPrioridade()
+
+    chamado = criar_chamado_teste(
+        4,
+        "João"
+    )
+
+    fila.adicionar_chamado(chamado)
+
+    sucesso = fila.cancelar_chamado(
+        chamado.id
+    )
+
+    assert sucesso is True
+    assert fila.esta_vazia() is True
+
+
+def test_cancelar_chamado_inexistente():
+
+    fila = FilaPrioridade()
+
+    sucesso = fila.cancelar_chamado(
+        "id_inexistente"
+    )
+
+    assert sucesso is False
