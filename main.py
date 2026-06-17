@@ -155,6 +155,7 @@ def menu() -> None:
         print("4 - Ver próximo")
         print("5 - Quantidade de chamados")
         print("6 - Top chamados críticos")
+        print("7 - Buscar chamado por ID")
         print("0 - Sair")
 
         opcao = input(
@@ -213,6 +214,12 @@ def menu() -> None:
                 exibir_top_chamados(
                     fila
                 )
+            
+            case "7":
+
+                buscar_chamado(
+                    fila
+                )
 
             case "0":
 
@@ -236,6 +243,53 @@ def menu() -> None:
                 print(
                     "\n❌ Opção inválida."
                 )
+
+def buscar_chamado(
+    fila: FilaPrioridade
+) -> None:
+
+    id_chamado = input(
+        "\nDigite o ID do chamado: "
+    ).strip()
+
+    chamado = fila.buscar_por_id(
+        id_chamado
+    )
+
+    if chamado is None:
+        print(
+            "\n❌ Chamado não encontrado."
+        )
+        return
+
+    print("\n=== CHAMADO ENCONTRADO ===")
+
+    print(
+        f"ID: {chamado.id}"
+    )
+
+    print(
+        f"Cliente: {chamado.cliente}"
+    )
+
+    print(
+        f"Categoria: {chamado.categoria}"
+    )
+
+    print(
+        f"Severidade: "
+        f"{chamado.severidade}"
+    )
+
+    print(
+        f"Descrição: "
+        f"{chamado.descricao}"
+    )
+
+    print(
+        f"Criado em: "
+        f"{chamado.criado_em}"
+    )
 
 
 if __name__ == "__main__":

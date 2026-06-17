@@ -107,3 +107,20 @@ class FilaPrioridade:
         """
 
         return self.heap.copy()
+    
+    def buscar_por_id(self, id_chamado: str) -> Chamado | None:
+        """
+        Busca um chamado pelo ID.
+
+        Args:
+            id_chamado: ID do chamado a ser buscado.
+
+        Returns:
+            Chamado encontrado ou None se não encontrado.
+        """
+
+        for chamado in self.heap:
+            if chamado.id == id_chamado:
+                return chamado
+
+        return None
