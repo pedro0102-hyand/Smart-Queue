@@ -156,6 +156,7 @@ def menu() -> None:
         print("5 - Quantidade de chamados")
         print("6 - Top chamados críticos")
         print("7 - Buscar chamado por ID")
+        print("8 - Cancelar chamado")
         print("0 - Sair")
 
         opcao = input(
@@ -218,6 +219,12 @@ def menu() -> None:
             case "7":
 
                 buscar_chamado(
+                    fila
+                )
+
+            case "8":
+
+                cancelar_chamado(
                     fila
                 )
 
@@ -290,6 +297,35 @@ def buscar_chamado(
         f"Criado em: "
         f"{chamado.criado_em}"
     )
+
+def cancelar_chamado(
+    fila: FilaPrioridade
+) -> None:
+
+    id_chamado = input(
+        "\nDigite o ID do chamado: "
+    ).strip()
+
+    sucesso = fila.cancelar_chamado(
+        id_chamado
+    )
+
+    if sucesso:
+
+        salvar_estado(
+            fila
+        )
+
+        print(
+            "\n✅ Chamado cancelado "
+            "com sucesso!"
+        )
+
+    else:
+
+        print(
+            "\n❌ Chamado não encontrado."
+        )
 
 
 if __name__ == "__main__":

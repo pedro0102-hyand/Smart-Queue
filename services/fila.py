@@ -124,3 +124,22 @@ class FilaPrioridade:
                 return chamado
 
         return None
+    
+    def cancelar_chamado(self, id_chamado: str) -> bool:
+        """
+        Cancela um chamado pelo ID.
+
+        Args:
+            id_chamado: ID do chamado a ser cancelado.
+
+        Returns:
+            True se o chamado foi cancelado, False se não encontrado.
+        """
+
+        for i, chamado in enumerate(self.heap):
+            if chamado.id == id_chamado:
+                del self.heap[i]
+                heapq.heapify(self.heap)  # Reorganiza a heap
+                return True
+
+        return False
