@@ -3,11 +3,18 @@ import csv
 
 from models.chamado import Chamado
 
+
 ARQUIVO_CSV = "data/chamados.csv"
 
-def salvar_chamados(chamados: list[Chamado]) -> None:
 
-    os.makedirs("data", exist_ok=True)
+def salvar_chamados(
+    chamados: list[Chamado]
+) -> None:
+
+    os.makedirs(
+        "data",
+        exist_ok=True
+    )
 
     with open(
         ARQUIVO_CSV,
@@ -16,7 +23,9 @@ def salvar_chamados(chamados: list[Chamado]) -> None:
         encoding="utf-8"
     ) as arquivo:
 
-        writer = csv.writer(arquivo)
+        writer = csv.writer(
+            arquivo
+        )
 
         writer.writerow([
             "id",
@@ -25,6 +34,7 @@ def salvar_chamados(chamados: list[Chamado]) -> None:
             "severidade",
             "descricao",
             "prioridade",
+            "ordem_chegada",
             "criado_em"
         ])
 
@@ -37,14 +47,18 @@ def salvar_chamados(chamados: list[Chamado]) -> None:
                 chamado.severidade,
                 chamado.descricao,
                 chamado.prioridade,
+                chamado.ordem_chegada,
                 chamado.criado_em
             ])
+
 
 def carregar_chamados() -> list[Chamado]:
 
     chamados = []
 
-    if not os.path.exists(ARQUIVO_CSV):
+    if not os.path.exists(
+        ARQUIVO_CSV
+    ):
         return chamados
 
     with open(
@@ -53,21 +67,50 @@ def carregar_chamados() -> list[Chamado]:
         encoding="utf-8"
     ) as arquivo:
 
-        reader = csv.DictReader(arquivo)
+        reader = csv.DictReader(
+            arquivo
+        )
 
         for linha in reader:
 
             chamado = Chamado(
-                prioridade=int(linha["prioridade"]),
+                prioridade=int(
+                    linha["prioridade"]
+                ),
+
+                ordem_chegada=int(
+                    linha.get(
+                        "ordem_chegada",
+                        0
+                    )
+                ),
+
                 id=linha["id"],
-                cliente=linha["cliente"],
-                categoria=linha["categoria"],
-                severidade=int(linha["severidade"]),
-                descricao=linha["descricao"],
-                criado_em=linha["criado_em"]
+
+                cliente=linha[
+                    "cliente"
+                ],
+
+                categoria=linha[
+                    "categoria"
+                ],
+
+                severidade=int(
+                    linha["severidade"]
+                ),
+
+                descricao=linha[
+                    "descricao"
+                ],
+
+                criado_em=linha[
+                    "criado_em"
+                ]
             )
 
-            chamados.append(chamado)
+            chamados.append(
+                chamado
+            )
 
     return chamados
 

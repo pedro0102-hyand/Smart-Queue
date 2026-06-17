@@ -44,6 +44,7 @@ def criar_chamado() -> Chamado:
 
     return Chamado(
         prioridade=prioridade,
+        ordem_chegada=0,  # Será definido na fila
         cliente=cliente,
         categoria=categoria,
         severidade=severidade,
@@ -136,7 +137,7 @@ def menu() -> None:
     chamados_salvos = carregar_chamados()
 
     for chamado in chamados_salvos:
-        fila.adicionar_chamado(chamado)
+        fila.carregar_chamado(chamado)
 
     print(
         f"\n📂 {len(chamados_salvos)} "
