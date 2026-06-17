@@ -1,4 +1,8 @@
-from services.reports import heapsort, top_chamados
+from services.reports import (
+    calcular_estatisticas,
+    heapsort,
+    top_chamados,
+)
 from tests.conftest import criar_chamado_teste
 
 
@@ -90,3 +94,44 @@ def test_top_chamados_limita_quantidade():
 def test_top_chamados_lista_vazia():
 
     assert top_chamados([]) == []
+
+
+def test_estatisticas_lista_vazia():
+
+    stats = calcular_estatisticas([])
+
+    assert stats["total"] == 0
+    assert stats["media_severidade"] == 0.0
+    assert stats["por_categoria"] == {}
+
+
+def test_estatisticas_total_e_media():
+
+    chamados = [
+        criar_chamado_teste(2, categoria="Suporte"),
+        criar_chamado_teste(4, categoria="Suporte"),
+        criar_chamado_teste(5, categoria="Financeiro"),
+    ]
+
+    stats = calcular_estatisticas(chamados)
+
+    assert stats["total"] == 3
+    assert stats["media_severidade"] == 11 / 3
+
+
+def test_estatisticas_por_categoria():
+
+    chamados = [
+        criar_chamado_teste(3, categoria="Suporte"),
+        criar_chamado_teste(3, categoria="Suporte"),
+        criar_chamado_teste(5, categoria="Financeiro"),
+        criar_chamado_teste(1, categoria="Vendas"),
+    ]
+
+    stats = calcular_estatisticas(chamados)
+
+    assert stats["por_categoria"] == {
+        "Suporte": 2,
+        "Financeiro": 1,
+        "Vendas": 1,
+    }

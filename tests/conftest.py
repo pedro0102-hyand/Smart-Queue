@@ -21,6 +21,7 @@ def criar_chamado_teste(
     cliente: str = "Teste",
     ordem_chegada: int = 0,
     id_chamado: str = "teste123",
+    categoria: str = "Teste",
 ) -> Chamado:
 
     return Chamado(
@@ -28,7 +29,7 @@ def criar_chamado_teste(
         ordem_chegada=ordem_chegada,
         id=id_chamado,
         cliente=cliente,
-        categoria="Teste",
+        categoria=categoria,
         severidade=severidade,
         descricao="Descrição de teste",
         criado_em="2026-06-17 10:00:00",

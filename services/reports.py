@@ -21,3 +21,42 @@ def top_chamados(
     
     ordenados = heapsort(chamados)
     return ordenados[:n] # Retorna os n primeiros chamados da lista ordenada
+
+
+def calcular_estatisticas(
+    chamados: list[Chamado],
+) -> dict:
+
+    total = len(chamados)
+
+    if total == 0:
+        return {
+            "total": 0,
+            "media_severidade": 0.0,
+            "por_categoria": {},
+        }
+
+    media_severidade = (
+        sum(
+            chamado.severidade
+            for chamado in chamados
+        )
+        / total
+    )
+
+    por_categoria: dict[str, int] = {}
+
+    for chamado in chamados:
+        por_categoria[chamado.categoria] = (
+            por_categoria.get(
+                chamado.categoria,
+                0,
+            )
+            + 1
+        )
+
+    return {
+        "total": total,
+        "media_severidade": media_severidade,
+        "por_categoria": por_categoria,
+    }

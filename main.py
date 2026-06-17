@@ -4,7 +4,10 @@ from services.persistence import (
     carregar_chamados,
     salvar_chamados
 )
-from services.reports import top_chamados
+from services.reports import (
+    calcular_estatisticas,
+    top_chamados,
+)
 
 
 def calcular_prioridade(severidade: int) -> int:
@@ -121,6 +124,42 @@ def exibir_top_chamados(
         print(f"{i}. {chamado}")
 
 
+def exibir_estatisticas(
+    fila: FilaPrioridade,
+) -> None:
+
+    stats = calcular_estatisticas(
+        fila.obter_todos()
+    )
+
+    print("\n=== ESTATÍSTICAS ===")
+    print(
+        f"Total de chamados: "
+        f"{stats['total']}"
+    )
+
+    if stats["total"] == 0:
+        print("Média de severidade: —")
+        print("\nQuantidade por categoria:")
+        print("  Nenhum chamado na fila.")
+        return
+
+    print(
+        f"Média de severidade: "
+        f"{stats['media_severidade']:.2f}"
+    )
+
+    print("\nQuantidade por categoria:")
+
+    for categoria, quantidade in sorted(
+        stats["por_categoria"].items()
+    ):
+        print(
+            f"  {categoria}: "
+            f"{quantidade}"
+        )
+
+
 def salvar_estado(
     fila: FilaPrioridade
 ) -> None:
@@ -157,6 +196,7 @@ def menu() -> None:
         print("6 - Top chamados críticos")
         print("7 - Buscar chamado por ID")
         print("8 - Cancelar chamado")
+        print("9 - Estatísticas")
         print("0 - Sair")
 
         opcao = input(
@@ -225,6 +265,12 @@ def menu() -> None:
             case "8":
 
                 cancelar_chamado(
+                    fila
+                )
+
+            case "9":
+
+                exibir_estatisticas(
                     fila
                 )
 
