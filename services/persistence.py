@@ -71,19 +71,35 @@ def carregar_chamados() -> list[Chamado]:
             arquivo
         )
 
-        for linha in reader:
+        tem_ordem_chegada = (
+            reader.fieldnames is not None
+            and "ordem_chegada" in reader.fieldnames
+        )
+
+        for indice, linha in enumerate(
+            reader,
+            start=1
+        ):
+
+            if tem_ordem_chegada:
+                valor = linha.get(
+                    "ordem_chegada",
+                    ""
+                ).strip()
+                ordem_chegada = (
+                    int(valor)
+                    if valor
+                    else indice
+                )
+            else:
+                ordem_chegada = indice
 
             chamado = Chamado(
                 prioridade=int(
                     linha["prioridade"]
                 ),
 
-                ordem_chegada=int(
-                    linha.get(
-                        "ordem_chegada",
-                        0
-                    )
-                ),
+                ordem_chegada=ordem_chegada,
 
                 id=linha["id"],
 
