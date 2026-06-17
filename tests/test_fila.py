@@ -1,20 +1,8 @@
+import csv
+
 from services.fila import FilaPrioridade
-from models.chamado import Chamado
-
-
-def criar_chamado_teste(
-    severidade: int,
-    cliente: str = "Teste"
-) -> Chamado:
-
-    return Chamado(
-        prioridade=-(severidade * 100),
-        ordem_chegada=0,
-        cliente=cliente,
-        categoria="Teste",
-        severidade=severidade,
-        descricao="Descrição de teste"
-    )
+from services.persistence import carregar_chamados
+from tests.conftest import criar_chamado_teste
 
 
 def test_fila_inicia_vazia():
@@ -180,3 +168,129 @@ def test_cancelar_chamado_inexistente():
     )
 
     assert sucesso is False
+
+
+def test_carregar_chamado_preserva_ordem_chegada():
+
+    fila = FilaPrioridade()
+
+    chamado = criar_chamado_teste(
+        3,
+        cliente="Pedro",
+        ordem_chegada=7,
+    )
+
+    fila.carregar_chamado(chamado)
+
+    assert chamado.ordem_chegada == 7
+    assert fila.contador == 7
+
+
+def test_carregar_chamado_atualiza_contador():
+
+    fila = FilaPrioridade()
+
+    fila.carregar_chamado(
+        criar_chamado_teste(
+            2,
+            ordem_chegada=5,
+        )
+    )
+
+    fila.carregar_chamado(
+        criar_chamado_teste(
+            4,
+            ordem_chegada=3,
+        )
+    )
+
+    assert fila.contador == 5
+
+    fila.adicionar_chamado(
+        criar_chamado_teste(1)
+    )
+
+    assert fila.contador == 6
+
+
+def test_fifo_apos_carregar_chamados():
+
+    fila = FilaPrioridade()
+
+    fila.carregar_chamado(
+        criar_chamado_teste(
+            3,
+            cliente="Ana",
+            ordem_chegada=1,
+        )
+    )
+
+    fila.carregar_chamado(
+        criar_chamado_teste(
+            3,
+            cliente="Bruno",
+            ordem_chegada=2,
+        )
+    )
+
+    primeiro = fila.atender_proximo()
+    segundo = fila.atender_proximo()
+
+    assert primeiro.cliente == "Ana"
+    assert segundo.cliente == "Bruno"
+
+
+def test_carregar_csv_legado_na_fila(
+    csv_temporario,
+):
+
+    with open(
+        csv_temporario,
+        mode="w",
+        newline="",
+        encoding="utf-8",
+    ) as arquivo:
+
+        writer = csv.writer(arquivo)
+
+        writer.writerow([
+            "id",
+            "cliente",
+            "categoria",
+            "severidade",
+            "descricao",
+            "prioridade",
+            "criado_em",
+        ])
+
+        writer.writerow([
+            "aaa11111",
+            "Ana",
+            "Suporte",
+            3,
+            "Problema A",
+            -300,
+            "2026-06-17 10:00:00",
+        ])
+
+        writer.writerow([
+            "bbb22222",
+            "Bruno",
+            "Suporte",
+            3,
+            "Problema B",
+            -300,
+            "2026-06-17 10:01:00",
+        ])
+
+    fila = FilaPrioridade()
+
+    for chamado in carregar_chamados():
+        fila.carregar_chamado(chamado)
+
+    primeiro = fila.atender_proximo()
+    segundo = fila.atender_proximo()
+
+    assert primeiro.cliente == "Ana"
+    assert segundo.cliente == "Bruno"
+    assert fila.contador == 2
